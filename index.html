@@ -13,16 +13,16 @@
             <href=""><img src="img/hospitalcopiapo_logo.png" alt="Hospital Logo" width="100px">
         </div>
         <nav>
-            <a href="#" class="opcion"><span>¿Quiénes somos?</span></a>
-            <a href="#" class="opcion"><span>¿Qué hacemos?</span></a>
-            <a href="#" class="opcion"><span>¿Dónde lo hacemos?</span></a>
+            <a href="#quienes-somos" class="opcion"><span>¿Quiénes somos?</span></a>
+            <a href="#que-hacemos" class="opcion"><span>¿Qué hacemos?</span></a>
+            <a href="#donde-hacemos" class="opcion"><span>¿Dónde lo hacemos?</span></a>
             <a href="#" class="login"><span>Iniciar sesión</span></a>
         </nav>
     </header>
 
     <main>
         <h1>Bienvenido al servicio de bodega del Hospital regional de Copiapó</h1>
-        <section>
+        <section id="quienes-somos">
             <h2>¿Quiénes somos?</h2>
             <p>
                 Somos el equipo encargado de la gestion de bodega del Hospital Regional de Copiapo.
@@ -31,30 +31,55 @@
             </p>
         </section>
         
-        <section>
+        <section id="que-hacemos">
             <h2>¿Qué hacemos?</h2>
             <p>
-                Realizamos control de stock, registro de entradas y salidas de productos, y distribucion 
-                de insumos para medicos a las diferentes areas del hospital.
+                Realizamos la gestión integral de los insumos médicos del hospital, abarcando el control de stock, el registro de entradas y salidas de productos, y la distribución oportuna de materiales a las distintas áreas clínicas y administrativas.
+                Nuestro objetivo es asegurar la disponibilidad continua de insumos, optimizando su uso y garantizando un abastecimiento eficiente y seguro para el personal de salud.
             </p>
         </section>
         
-        <section>
+        <section id="donde-hacemos">
                 <h2>¿Dónde lo hacemos?</h2>
                 <p>
-                    Operamos en el Hospital Regional de Copiapo, ubicado en la region de Atacama, Chile.
+                    Las labores se desarrollan en la bodega central del hospital, ubicada en el primer piso del edificio principal. En este espacio se almacenan y gestionan los insumos médicos necesarios para el correcto funcionamiento de la institución.
                 </p>
+
+                </p>
+                    Asimismo, en el segundo piso del edificio principal opera el área de Abastecimiento, encargada de la gestión de compras, asegurando una adecuada distribución de los insumos y un riguroso control de stock.
+                </p>
+
+                <section class="carrusel">
+                    <div class="carrusel-track">
+                        <img src="img/Hospital/hospital1.jpg" alt="Foto 1">
+                        <img src="img/Hospital/hospital2.jpg" alt="Foto 2">
+                        <img src="img/Hospital/hospital3.jpg" alt="Foto 3">
+                    </div>
+        </section>
         </section>
         
     </main>
 
     <footer>
-        <p>&copy; 2026 Hospital Copiapó. Todos los derechos reservados.</p>
         <nav>
             <h1 style="font-size: 18px;">Contacto</h1>
             <p>Teléfono: +56 9 1234 5678</p>
             <p>Email: secretaria.abas@redsalud.gob.cl</p>
         </nav>
+                <p>&copy; 2026 Hospital Copiapó. Todos los derechos reservados.</p>
     </footer>
+
+    <script>
+        const imagenes = document.querySelectorAll('.carrusel-track img');
+        let actual = 0;
+
+        imagenes[actual].classList.add('activa');
+
+        setInterval(() => {
+            imagenes[actual].classList.remove('activa');
+            actual = (actual + 1) % imagenes.length;
+            imagenes[actual].classList.add('activa');
+        }, 3000);
+    </script>
 </body>
 </html>

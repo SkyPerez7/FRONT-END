@@ -1,26 +1,47 @@
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f5f7f6;
+    color: #1a1a1a;
+}
+
+.contenedor {
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
 header {
-    background-color: #abc510;
+    background-color: #2e7d32;
     display: flex;
     align-items: center;
-    padding: 2px 15px;
+    padding: 8px 20px;
+}
+
+.logo img {
+    margin-right: auto;
+    height: 85px;
 }
 
 nav {
     display: flex;
     align-self: stretch;
+    margin-left: 500px;
 }
 
 nav a {
     text-decoration: none;
-    color: rgb(16, 112, 29);
-    -webkit-text-stroke: 0.5px black;
+    color: white;
     font-weight: bold;
-    font-size: 20px;
+    font-size: 18px;
     display: flex;
     align-items: center;
-    padding: 0 28px;
+    padding: 0 25px;
     position: relative;
-    transition: color 0.3s;
+    transition: all 0.3s ease;
 }
 
 nav a::before {
@@ -38,49 +59,74 @@ nav a span {
 }
 
 nav a:hover::before {
-    background-color: #2c7011;
+    background-color: #1b5e20;
 }
 
 nav a:hover {
-    color: rgb(255, 255, 255);
-    -webkit-text-stroke: 0.5px rgba(255, 255, 255, 0.3);
-}
-
-.logo img {
-    margin-right: 700px;
-}
-
-body {
-    margin: 0;
-    padding: 0;
+    color: #ffffff;
 }
 
 .login {
-    margin-left: 145px;
-}
-
-html, body {
-    height: 100%;
-    margin: 0;
-}
-
-.contenedor {
-    min-height: 100%;
-    display: flex;
-    flex-direction: column;
+    margin-left: 350px;
 }
 
 main {
     flex: 1;
+    padding: 20px;
 }
 
 footer {
-    background-color: #abc510;
-    color: rgb(0, 0, 0);
+    background-color: #2e7d32;
+    color: white;
     text-align: center;
-    padding: 10px;
+    padding: 15px;
 }
 
 footer nav {
     flex-direction: column;
+    margin-top: 10px;
+    margin-left: 0;  
+    align-items: center;
+}
+
+footer a {
+    color: #c8e6c9;
+    text-decoration: none;
+    margin: 5px 0;
+}
+
+footer a:hover {
+    text-decoration: underline;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+.carrusel {
+    width: 66%;
+    margin: 0 auto;
+    overflow: hidden;
+    position: relative;
+}
+
+.carrusel-track {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+}
+
+.carrusel-track img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0;
+    transition: opacity 1s ease-in-out;
+}
+
+.carrusel-track img.activa {
+    opacity: 1;
 }
