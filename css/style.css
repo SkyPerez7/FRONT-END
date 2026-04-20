@@ -80,6 +80,10 @@ footer {
     color: white;
     text-align: center;
     padding: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
 }
 
 footer nav {
@@ -87,6 +91,7 @@ footer nav {
     margin-top: 10px;
     margin-left: 0;  
     align-items: center;
+    margin: 0 auto;
 }
 
 footer a {
@@ -97,6 +102,12 @@ footer a {
 
 footer a:hover {
     text-decoration: underline;
+}
+
+footer p:last-child {
+    width: 100%;
+    text-align: center;
+    margin-top: 10px;
 }
 
 html {
@@ -129,4 +140,68 @@ html {
 
 .carrusel-track img.activa {
     opacity: 1;
+}
+
+.mapa-footer {
+    width: 300px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: opacity 0.3s ease;
+    margin: 10px 20px;
+}
+
+.mapa-footer:hover {
+    opacity: 0.8;
+}
+
+.mapa-contenedor {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.mapa-contenedor p {
+    color: white;
+    font-size: 14px;
+    margin: 0 0 5px 0;
+}
+
+.btn-subir {
+    background-color: #1b5e20;
+    color: white;
+    text-decoration: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    font-size: 16px;
+    align-self: center;
+    transition: background-color 0.3s ease;
+}
+
+.btn-subir:hover {
+    background-color: #4caf50;
+    color: white;
+}
+
+main h1, main h2 {
+    font-family: 'Montserrat', sans-serif;
+}
+
+main p {
+    font-family: 'Roboto', sans-serif;
+}
+
+.galeria-que-hacemos {
+    display: flex;
+    gap: 16px;
+    margin: 20px 40px 0 40px;
+    justify-content: center;
+}
+
+.galeria-que-hacemos img {
+    flex: 1;
+    width: 0;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    border-radius: 8px;
 }
