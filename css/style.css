@@ -94,6 +94,10 @@ main h1, main h2 {
 main p {
     font-family: 'Roboto', sans-serif;
     line-height: 1.7;
+    font-size: 1.1rem;
+    color: #444;
+    max-width: 850px;
+    text-align: justify;
 }
 
 .galeria-que-hacemos {
@@ -311,7 +315,21 @@ footer {
     }
 
     main h2 {
-        font-size: 1.2rem;
+    color: #1b5e20;
+    font-size: 1.8rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    }
+
+    main h2::before {
+    content: "";
+    display: inline-block;
+    width: 6px;
+    height: 32px;
+    background-color: #4caf50;
+    border-radius: 4px;
     }
 
     .galeria-que-hacemos {
@@ -481,4 +499,13 @@ footer {
     background-color: #4caf50;
     margin: 0 auto;
     border-radius: 2px;
+}
+
+#quienes-somos, #que-hacemos, #donde-hacemos {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    margin-bottom: 40px;
+    border-top: 4px solid #2e7d32;
 }
