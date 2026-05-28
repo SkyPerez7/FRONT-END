@@ -15,12 +15,7 @@
         <div class="logo">
             <href=""><img src="img/hospitalcopiapo_logo.png" alt="Hospital Logo" width="100px">
         </div>
-        <nav>
-            <a href="#quienes-somos" class="opcion"><span>¿Quiénes somos?</span></a>
-            <a href="#que-hacemos" class="opcion"><span>¿Qué hacemos?</span></a>
-            <a href="#donde-hacemos" class="opcion"><span>¿Dónde lo hacemos?</span></a>
-            <a href="#" class="login"><span>Iniciar sesión</span></a>
-        </nav>
+        <!-- Botón hamburguesa y nav generados por menu.js -->
     </header>
 
     <main>
@@ -176,17 +171,6 @@
         </div>
     </footer>
 
-    <script>
-        const imagenes = document.querySelectorAll('.carrusel-track img');
-        let actual = 0;
-
-        imagenes[actual].classList.add('activa');
-
-        setInterval(() => {
-            imagenes[actual].classList.remove('activa');
-            actual = (actual + 1) % imagenes.length;
-            imagenes[actual].classList.add('activa');
-        }, 3000);
-    </script>
+    <script src="js/main.js"></script>
 </body>
 </html>
