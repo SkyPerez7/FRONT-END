@@ -116,4 +116,110 @@
         }, 3000);
     }
 
+
+    // ── 9. CARGA DINÁMICA DE TARJETAS DEL EQUIPO ─────────────────
+    // Los datos del equipo viven aquí como arreglo de objetos.
+    // Para agregar un miembro, solo agrega un objeto al arreglo.
+    const equipo = [
+        {
+            nombre:  'Juan Navarro',
+            cargo:   'Jefe de Abastecimiento',
+            icono:   '📋',
+            imagen:  'img/Funcionarios/imagen de prueba.jpg',
+            descripcion: 'Más de 45 años gestionando el inventario de insumos médicos del hospital.'
+        },
+        {
+            nombre:  'Jefe de Bodega',
+            cargo:   'Control de Stock',
+            icono:   '📦',
+            imagen:  'img/Funcionarios/imagen de prueba.jpg',
+            descripcion: 'Supervisa entradas y salidas de productos y coordina con proveedores.'
+        },
+        {
+            nombre:  'Equipo de Abastecimiento',
+            cargo:   'Coordinación',
+            icono:   '👤👤👤',
+            imagen:  'img/Funcionarios/imagen de prueba.jpg',
+            descripcion: 'Asegura la entrega oportuna de materiales a todas las áreas clínicas.'
+        },
+        {
+            nombre:  'Equipo de Bodega',
+            cargo:   'Operaciones',
+            icono:   '👤👤👤',
+            imagen:  'img/Funcionarios/imagen de prueba.jpg',
+            descripcion: 'Gestiona el almacenamiento y despacho diario de insumos médicos.'
+        },
+    ];
+
+    // Función que construye UNA tarjeta a partir de un objeto del arreglo
+    function crearTarjeta(miembro) {
+
+        // Contenedor exterior .escena
+        const escena = document.createElement('div');
+        escena.classList.add('escena');
+
+        // .tarjeta (wrapper del flip)
+        const tarjeta = document.createElement('div');
+        tarjeta.classList.add('tarjeta');
+
+        // ── CARA FRENTE ──────────────────────────────
+        const caraFrente = document.createElement('div');
+        caraFrente.classList.add('cara', 'cara-frente');
+
+        const img = document.createElement('img');
+        img.src = miembro.imagen;
+        img.alt = miembro.nombre;
+
+        const hint = document.createElement('div');
+        hint.classList.add('hint');
+        hint.textContent = '↻';
+
+        const etiqueta = document.createElement('div');
+        etiqueta.classList.add('etiqueta');
+        etiqueta.textContent = miembro.nombre;
+
+        caraFrente.appendChild(img);
+        caraFrente.appendChild(hint);
+        caraFrente.appendChild(etiqueta);
+
+        // ── CARA REVERSO ─────────────────────────────
+        const caraReverso = document.createElement('div');
+        caraReverso.classList.add('cara', 'cara-reverso');
+
+        const icono = document.createElement('div');
+        icono.classList.add('icono-grande');
+        icono.textContent = miembro.icono;
+
+        const h3 = document.createElement('h3');
+        h3.textContent = miembro.nombre;
+
+        const separador = document.createElement('div');
+        separador.classList.add('separador');
+
+        const p = document.createElement('p');
+        p.textContent = miembro.descripcion;
+
+        caraReverso.appendChild(icono);
+        caraReverso.appendChild(h3);
+        caraReverso.appendChild(separador);
+        caraReverso.appendChild(p);
+
+        // ── ENSAMBLAR ────────────────────────────────
+        tarjeta.appendChild(caraFrente);
+        tarjeta.appendChild(caraReverso);
+        escena.appendChild(tarjeta);
+
+        return escena;
+    }
+
+    // Recorrer el arreglo y agregar cada tarjeta al contenedor
+    const contenedor = document.getElementById('equipo-container');
+
+    if (contenedor) {
+        equipo.forEach(miembro => {
+            const tarjeta = crearTarjeta(miembro);
+            contenedor.appendChild(tarjeta);
+        });
+    }
+
 })();
