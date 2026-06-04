@@ -1,28 +1,72 @@
 /* ============================================================
-RESET Y BASE GLOBAL
-Elimina márgenes y padding por defecto del navegador.
-Define la fuente base, color de fondo y color de texto
-para toda la página.
+   VARIABLES DE TEMA — MODO CLARO (por defecto)
+   ============================================================ */
+:root {
+    --bg-page:         #f5f7f6;
+    --bg-header:       #2e7d32;
+    --bg-header-dark:  #1b5e20;
+    --bg-section:      #ffffff;
+    --bg-card-front:   #ffffff;
+    --bg-nav-panel:    #1b5e20;
+
+    --text-primary:    #1a1a1a;
+    --text-secondary:  #444444;
+    --text-muted:      #666666;
+    --text-card-label: #1b5e20;
+
+    --border-accent:   #2e7d32;
+    --shadow-section:  rgba(0,0,0,0.07);
+    --shadow-card:     rgba(0,0,0,0.10);
+
+    --btn-toggle-bg:   rgba(255,255,255,0.15);
+    --btn-toggle-border: rgba(255,255,255,0.5);
+
+    --transition-theme: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ============================================================
+   VARIABLES DE TEMA — MODO OSCURO
+   ============================================================ */
+[data-tema="oscuro"] {
+    --bg-page:         #0f1a10;
+    --bg-header:       #1a3d1c;
+    --bg-header-dark:  #0f2410;
+    --bg-section:      #1c2b1e;
+    --bg-card-front:   #1c2b1e;
+    --bg-nav-panel:    #0f2410;
+
+    --text-primary:    #e8f5e9;
+    --text-secondary:  #a5c8a8;
+    --text-muted:      #78a87b;
+    --text-card-label: #81c784;
+
+    --border-accent:   #4caf50;
+    --shadow-section:  rgba(0,0,0,0.35);
+    --shadow-card:     rgba(0,0,0,0.40);
+
+    --btn-toggle-bg:   rgba(255,255,255,0.10);
+    --btn-toggle-border: rgba(255,255,255,0.3);
+}
+
+/* ============================================================
+   RESET Y BASE GLOBAL
    ============================================================ */
 html, body {
     height: 100%;
     margin: 0;
     padding: 0;
     font-family: Arial, Helvetica, sans-serif;
-    background-color: #f5f7f6;
-    color: #1a1a1a;
+    background-color: var(--bg-page);
+    color: var(--text-primary);
+    transition: var(--transition-theme);
 }
 
 html {
-    scroll-behavior: smooth; /* Hace que los saltos de ancla (#sección) sean animados */
+    scroll-behavior: smooth;
 }
 
-
 /* ============================================================
-CONTENEDOR PRINCIPAL
-Envuelve todo el contenido de la página (header, main,
-footer). Usa flexbox en columna para que el footer siempre
-quede al fondo aunque el contenido sea corto.
+   CONTENEDOR PRINCIPAL
    ============================================================ */
 .contenedor {
     min-height: 100%;
@@ -30,36 +74,86 @@ quede al fondo aunque el contenido sea corto.
     flex-direction: column;
 }
 
-
 /* ============================================================
-HEADER
-Barra superior verde con logo y navegación. Usa flexbox
-para alinear el logo a la izquierda y el nav a la derecha.
-Se adapta a múltiples filas en pantallas pequeñas (flex-wrap).
+   HEADER
    ============================================================ */
 header {
-    background-color: #2e7d32;
+    background-color: var(--bg-header);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 8px 20px;
-    flex-wrap: wrap;
     gap: 10px;
+    transition: background-color 0.3s ease;
 }
 
-/* Logo: controla el tamaño de la imagen dentro del header */
 .logo img {
     height: 85px;
     width: auto;
+    display: block;
 }
 
+/* ==========================================
+   SWITCH FLOTANTE DE TEMA
+========================================== */
+
+#btn-tema {
+    position: fixed;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 9999;
+
+    background: transparent;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+.switch-track {
+    width: 62px;
+    height: 32px;
+    background: #cfd8dc;
+    border-radius: 999px;
+    display: block;
+    position: relative;
+    transition: background-color 0.3s ease;
+}
+
+.switch-thumb {
+    width: 26px;
+    height: 26px;
+    background: white;
+    border-radius: 50%;
+
+    position: absolute;
+    top: 3px;
+    left: 3px;
+
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,.25);
+}
+
+#btn-tema.activo .switch-track {
+    background: #4caf50;
+}
+
+#btn-tema.activo .switch-thumb {
+    transform: translateX(30px);
+}
+
+/* móvil */
+@media (max-width: 768px) {
+    #btn-tema {
+        right: 12px;
+        top: auto;
+        bottom: 20px;
+        transform: none;
+    }
+}
 
 /* ============================================================
-NAVEGACIÓN (NAV)
-Barra de enlaces horizontales dentro del header.
-Cada enlace tiene efecto hover con fondo oscuro animado.
-El span interior garantiza que el texto quede sobre el
-pseudo-elemento ::before (que es el fondo del hover).
+   NAVEGACIÓN ESCRITORIO
    ============================================================ */
 nav {
     display: flex;
@@ -67,7 +161,6 @@ nav {
     flex-wrap: wrap;
     justify-content: center;
     gap: 0;
-    margin-left: 0;
 }
 
 nav a {
@@ -83,7 +176,6 @@ nav a {
     white-space: nowrap;
 }
 
-/* Pseudo-elemento para el fondo del hover (cubre todo el área del enlace) */
 nav a::before {
     content: '';
     position: absolute;
@@ -93,35 +185,28 @@ nav a::before {
     z-index: 0;
 }
 
-/* El texto del nav debe ir dentro de <span> para quedar sobre el ::before */
 nav a span {
     position: relative;
     z-index: 1;
 }
 
 nav a:hover::before {
-    background-color: #1b5e20; /* Verde más oscuro al pasar el cursor */
+    background-color: rgba(0,0,0,0.2);
 }
 
 nav a:hover {
     color: #ffffff;
 }
 
-/* Separador visual antes del botón de login */
 .login {
-    margin-left: 0;
     border-left: 2px solid rgba(255,255,255,0.3);
 }
 
-
 /* ============================================================
-MENÚ HAMBURGUESA (MOBILE)
-Botón que aparece en pantallas ≤768px para abrir/cerrar
-el menú lateral. Las tres líneas (.linea) se transforman
-en una "X" cuando la clase .activo está presente.
+   BOTÓN HAMBURGUESA — Solo móvil
    ============================================================ */
 .hamburguesa {
-    display: flex; /* Visible siempre; el nav se abre/cierra con JS */
+    display: none;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -133,15 +218,15 @@ en una "X" cuando la clase .activo está presente.
     border-radius: 8px;
     cursor: pointer;
     padding: 8px;
-    z-index: 1001;
+    z-index: 9999;
     transition: border-color 0.3s;
+    flex-shrink: 0;
 }
 
 .hamburguesa:hover {
     border-color: rgba(255,255,255,0.9);
 }
 
-/* Cada una de las tres líneas del ícono */
 .hamburguesa .linea {
     display: block;
     width: 22px;
@@ -153,47 +238,30 @@ en una "X" cuando la clase .activo está presente.
     transform-origin: center;
 }
 
-/* Animación al activar: línea 1 y 3 forman una X, línea 2 desaparece */
-.hamburguesa.activo .linea:nth-child(1) {
-    transform: translateY(7px) rotate(45deg);
-}
-.hamburguesa.activo .linea:nth-child(2) {
-    opacity: 0;
-    transform: scaleX(0);
-}
-.hamburguesa.activo .linea:nth-child(3) {
-    transform: translateY(-7px) rotate(-45deg);
-}
-
+.hamburguesa.activo .linea:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+.hamburguesa.activo .linea:nth-child(2) { opacity: 0; transform: scaleX(0); }
+.hamburguesa.activo .linea:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
 
 /* ============================================================
-OVERLAY DE NAVEGACIÓN MOBILE
-Fondo semitransparente que aparece detrás del menú lateral
-cuando está abierto. Se crea por JavaScript y se muestra
-añadiendo la clase .overlay-visible.
+   OVERLAY
    ============================================================ */
 .nav-overlay {
-    display: none;
     position: fixed;
     inset: 0;
     background-color: rgba(0, 0, 0, 0.45);
-    z-index: 999;
-    backdrop-filter: blur(2px);
+    z-index: 8000;
     opacity: 0;
+    pointer-events: none;
     transition: opacity 0.3s ease;
 }
 
 .nav-overlay.overlay-visible {
-    display: block;
     opacity: 1;
+    pointer-events: auto;
 }
 
-
 /* ============================================================
-MAIN (CONTENIDO PRINCIPAL)
-Área central de la página. Crece para ocupar el espacio
-disponible entre header y footer (flex: 1).
-Define estilos base para h1, h2 y párrafos.
+   MAIN
    ============================================================ */
 main {
     flex: 1;
@@ -202,40 +270,35 @@ main {
 
 main h1, main h2 {
     font-family: 'Montserrat', sans-serif;
+    color: var(--text-primary);
+    transition: color 0.3s ease;
 }
 
 main p {
     font-family: 'Roboto', sans-serif;
     line-height: 1.7;
     font-size: 1.1rem;
-    color: #444;
+    color: var(--text-secondary);
     max-width: 850px;
     text-align: justify;
+    transition: color 0.3s ease;
 }
 
-
 /* ============================================================
-SECCIONES DE CONTENIDO
-Bloques con fondo blanco, bordes redondeados y sombra sutil.
-La franja verde superior (border-top) identifica visualmente
-cada sección. Afecta a: ¿Quiénes somos?, ¿Qué hacemos?,
-¿Dónde hacemos?
+   SECCIONES
    ============================================================ */
 #quienes-somos, #que-hacemos, #donde-hacemos {
-    background: white;
+    background: var(--bg-section);
     padding: 30px;
     border-radius: 12px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    box-shadow: 0 4px 12px var(--shadow-section);
     margin-bottom: 40px;
-    border-top: 4px solid #2e7d32;
+    border-top: 4px solid var(--border-accent);
+    transition: background 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
-
 /* ============================================================
-GALERÍA (¿QUÉ HACEMOS?)
-Fila de imágenes sin wrap para que estén siempre en una
-sola línea. Cada imagen ocupa el mismo espacio proporcional
-y mantiene relación de aspecto 4:3 con recorte centrado.
+   GALERÍA
    ============================================================ */
 .galeria-que-hacemos {
     display: flex;
@@ -253,13 +316,8 @@ y mantiene relación de aspecto 4:3 con recorte centrado.
     border-radius: 8px;
 }
 
-
 /* ============================================================
-CARRUSEL DE IMÁGENES
-Slideshow automático (controlado por JS). Las imágenes
-se apilan en posición absoluta; la que tiene clase .activa
-se muestra con opacidad 1. La transición de 1 segundo crea
-el fundido entre diapositivas.
+   CARRUSEL
    ============================================================ */
 .carrusel {
     width: 90%;
@@ -272,47 +330,36 @@ el fundido entre diapositivas.
 .carrusel-track {
     position: relative;
     width: 100%;
-    aspect-ratio: 16 / 9; /* Proporción de pantalla ancha */
+    aspect-ratio: 16 / 9;
 }
 
 .carrusel-track img {
     position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     object-fit: cover;
-    opacity: 0; /* Todas ocultas por defecto */
+    opacity: 0;
     transition: opacity 1s ease-in-out;
 }
 
 .carrusel-track img.activa {
-    opacity: 1; /* Solo la activa es visible */
+    opacity: 1;
 }
 
-
 /* ============================================================
-TARJETAS CON EFECTO FLIP (3D)
-Tarjetas que se voltean en 3D al hacer hover, mostrando
-información adicional en el reverso.
-- .escena: contenedor con perspectiva 3D
-- .tarjeta: elemento que rota en Y
-- .cara-frente: lado visible por defecto (imagen + etiqueta)
-- .cara-reverso: lado oculto con descripción (rotado 180°)
+   TARJETAS CON EFECTO FLIP (3D)
    ============================================================ */
-
-/* Título de la sección de tarjetas */
 .section-titulo-tarjetas {
     text-align: center;
     font-family: 'Montserrat', sans-serif;
     font-size: 1.6rem;
     font-weight: 700;
-    color: #2e7d32;
+    color: var(--border-accent);
     margin-bottom: 36px;
     letter-spacing: 0.3px;
+    transition: color 0.3s ease;
 }
 
-/* Grid de tarjetas centrado y con espaciado */
 .tarjetas-container {
     display: flex;
     flex-wrap: wrap;
@@ -320,7 +367,6 @@ información adicional en el reverso.
     gap: 28px;
 }
 
-/* Contenedor de perspectiva: necesario para que el hijo se vea en 3D */
 .escena {
     width: 260px;
     height: 340px;
@@ -328,92 +374,87 @@ información adicional en el reverso.
     cursor: pointer;
 }
 
-/* La tarjeta en sí: rota cuando el padre (.escena) recibe hover */
 .tarjeta {
     width: 100%;
     height: 100%;
     position: relative;
     transform-style: preserve-3d;
-    transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
-    border-radius: 14px;
+    transition: transform 0.65s cubic-bezier(0.4, 0, 0.2, 1);
+    border-radius: 16px;
 }
 
 .escena:hover .tarjeta {
-    transform: rotateY(180deg); /* Volteo al hacer hover */
+    transform: rotateY(180deg);
 }
 
-/* Propiedades comunes a ambas caras */
 .cara {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    border-radius: 14px;
-    backface-visibility: hidden;         /* Oculta la cara cuando está dada vuelta */
-    -webkit-backface-visibility: hidden;
+    inset: 0;
+    border-radius: 16px;
+    backface-visibility: hidden;
     overflow: hidden;
-    box-shadow: 0 6px 24px rgba(0,0,0,0.13);
 }
 
-/* --- CARA FRONTAL --- */
-.cara-frente { background-color: #e8f5e9; }
+.cara-frente {
+    background-color: var(--bg-card-front);
+    box-shadow: 0 6px 20px var(--shadow-card);
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
 
 .cara-frente img {
     width: 100%;
-    height: 100%;
+    height: 75%;
     object-fit: cover;
     display: block;
 }
 
-/* Gradiente en la parte inferior con el nombre de la tarjeta */
 .cara-frente .etiqueta {
-    position: absolute;
-    bottom: 0; left: 0; right: 0;
-    background: linear-gradient(to top, rgba(27,94,32,0.88) 0%, transparent 100%);
-    color: white;
+    padding: 12px 16px 10px;
     font-family: 'Montserrat', sans-serif;
-    font-size: 0.95rem;
+    font-size: 0.9rem;
     font-weight: 700;
-    padding: 28px 16px 14px;
-}
-
-/* Ícono de pista (ej: ícono de flip) en la esquina superior derecha */
-.cara-frente .hint {
-    position: absolute;
-    top: 12px; right: 12px;
-    background-color: rgba(46,125,50,0.82);
-    color: white;
-    border-radius: 50%;
-    width: 34px; height: 34px;
+    color: var(--text-card-label);
+    background: var(--bg-card-front);
+    height: 25%;
     display: flex;
     align-items: center;
-    justify-content: center;
-    font-size: 16px;
+    box-sizing: border-box;
+    transition: color 0.3s ease, background 0.3s ease;
 }
 
-/* --- CARA TRASERA --- */
-.cara-reverso {
-    background: linear-gradient(145deg, #2e7d32 0%, #1b5e20 100%);
+.cara-frente .hint {
+    position: absolute;
+    top: 10px; right: 10px;
+    background: rgba(46,125,50,0.85);
     color: white;
-    transform: rotateY(180deg); /* Empieza dada vuelta, se ve al hacer flip */
+    font-size: 0.8rem;
+    font-weight: bold;
+    padding: 3px 8px;
+    border-radius: 20px;
+}
+
+.cara-reverso {
+    background: linear-gradient(145deg, #2e7d32, #1b5e20);
+    transform: rotateY(180deg);
     display: flex;
     flex-direction: column;
+    align-items: center;
     justify-content: center;
-    padding: 28px 24px;
-    gap: 14px;
+    padding: 28px 20px;
+    gap: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+    box-sizing: border-box;
 }
 
-.cara-reverso .icono-grande {
-    font-size: 2.8rem;
-    text-align: center;
-    margin-bottom: 4px;
-}
+.cara-reverso .icono-grande { font-size: 2.8rem; line-height: 1; }
 
 .cara-reverso h3 {
     font-family: 'Montserrat', sans-serif;
-    font-size: 1.05rem;
+    font-size: 1rem;
     font-weight: 700;
+    color: #ffffff;
+    margin: 0;
     text-align: center;
-    color: #fff;
 }
 
 .cara-reverso p {
@@ -422,31 +463,27 @@ información adicional en el reverso.
     color: #c8e6c9;
     line-height: 1.65;
     text-align: center;
+    margin: 0;
 }
 
-/* Línea decorativa entre el ícono y el texto */
 .cara-reverso .separador {
-    width: 40px; height: 2px;
+    width: 40px;
+    height: 2px;
     background-color: #4caf50;
-    margin: 0 auto;
     border-radius: 2px;
 }
 
-
 /* ============================================================
-FOOTER
-Pie de página verde dividido en dos áreas:
-- .footer-columnas: tres columnas con info, links y mapa
-- .footer-bottom: franja más oscura con copyright y botón
+   FOOTER
    ============================================================ */
 footer {
-    background-color: #2e7d32;
+    background-color: var(--bg-header);
     color: white;
     display: flex;
     flex-direction: column;
+    transition: background-color 0.3s ease;
 }
 
-/* Área de columnas del footer */
 .footer-columnas {
     display: flex;
     flex-wrap: wrap;
@@ -456,7 +493,6 @@ footer {
     padding: 36px 40px 24px 40px;
 }
 
-/* Cada columna individual */
 .footer-col {
     display: flex;
     flex-direction: column;
@@ -478,22 +514,14 @@ footer {
 .footer-col p {
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
-    color: #c8e6c9; /* Verde claro sobre fondo verde oscuro */
+    color: #c8e6c9;
     margin: 4px 0;
     line-height: 1.6;
 }
 
-.footer-col a {
-    color: #c8e6c9;
-    text-decoration: none;
-}
+.footer-col a { color: #c8e6c9; text-decoration: none; }
+.footer-col a:hover { color: #ffffff; text-decoration: underline; }
 
-.footer-col a:hover {
-    color: #ffffff;
-    text-decoration: underline;
-}
-
-/* Links de texto en el footer (excluye la imagen del mapa) */
 .footer-col a:not(.mapa-footer) {
     font-family: 'Roboto', sans-serif;
     font-size: 14px;
@@ -503,7 +531,6 @@ footer {
     display: block;
 }
 
-/* Imagen de mapa en el footer: actúa como enlace a Google Maps */
 .mapa-footer {
     width: 100%;
     max-width: 280px;
@@ -514,18 +541,16 @@ footer {
     display: block;
 }
 
-.mapa-footer:hover {
-    opacity: 0.85;
-}
+.mapa-footer:hover { opacity: 0.85; }
 
-/* Franja inferior del footer: copyright + botón "volver arriba" */
 .footer-bottom {
-    background-color: #1b5e20; /* Verde más oscuro que el resto del footer */
+    background-color: var(--bg-header-dark);
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 12px 20px;
     gap: 16px;
+    transition: background-color 0.3s ease;
 }
 
 .footer-bottom p {
@@ -535,9 +560,8 @@ footer {
     text-align: center;
 }
 
-/* Botón "Volver arriba" en la franja inferior del footer */
 .btn-subir {
-    background-color: #2e7d32;
+    background-color: var(--bg-header);
     color: white;
     text-decoration: none;
     padding: 8px 16px;
@@ -548,88 +572,79 @@ footer {
     white-space: nowrap;
 }
 
-.btn-subir:hover {
-    background-color: #4caf50;
-    color: white;
-}
-
+.btn-subir:hover { background-color: #4caf50; color: white; }
 
 /* ============================================================
-RESPONSIVE — TABLETS (≤900px)
-Ajustes para pantallas medianas: header centrado, logo más
-pequeño, nav con fuente reducida, galería en 2 columnas y
-carrusel más ancho.
+   RESPONSIVE — TABLETS (≤900px)
    ============================================================ */
 @media (max-width: 900px) {
-    header {
-        justify-content: center;
-    }
-
-    .logo img {
-        height: 65px;
-    }
-
-    nav a {
-        font-size: 15px;
-        padding: 10px 12px;
-    }
-
-    .galeria-que-hacemos img {
-        max-width: calc(50% - 8px);
-    }
-
-    .carrusel {
-        width: 95%;
-    }
+    .logo img { height: 65px; }
+    nav a { font-size: 15px; padding: 10px 12px; }
+    .galeria-que-hacemos img { max-width: calc(50% - 8px); }
+    .carrusel { width: 95%; }
 }
 
-
 /* ============================================================
-RESPONSIVE — MÓVIL GRANDE (≤600px)
-El header se apila en columna. El nav se convierte en lista
-vertical de ancho completo. Los párrafos y títulos se
-achican. La galería pasa a 2 columnas. El footer se apila.
+   RESPONSIVE — MÓVIL (≤768px)
    ============================================================ */
-@media (max-width: 600px) {
-    header {
-        flex-direction: column;
-        align-items: center;
-        padding: 12px 10px;
-    }
+@media (max-width: 768px) {
 
-    .logo img {
-        height: 60px;
-    }
+    header { padding: 10px 16px; }
+    .logo img { height: 60px; }
 
-    nav {
-        width: 100%;
+    /* Mostrar hamburguesa */
+    .hamburguesa { display: flex; }
+
+    /* Ocultar btn-tema en móvil junto al nav (sigue en header) */
+    #btn-tema { font-size: 0; padding: 6px 8px; }
+    #btn-tema .icono-tema { font-size: 18px; }
+
+    /* Panel lateral */
+    #nav-menu {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 75%;
+        max-width: 300px;
+        height: 100%;
+        background-color: var(--bg-nav-panel);
         flex-direction: column;
         align-items: stretch;
+        justify-content: flex-start;
+        padding-top: 80px;
+        gap: 0;
+        z-index: 9000;
+        box-shadow: -4px 0 20px rgba(0,0,0,0.3);
+        transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.3s ease;
+        overflow-y: auto;
+        flex-wrap: nowrap;
+        visibility: hidden;
     }
 
-    nav a {
-        font-size: 15px;
-        padding: 12px 16px;
-        border-bottom: 1px solid rgba(255,255,255,0.15);
-        justify-content: center;
+    #nav-menu.nav-abierto {
+        right: 0;
+        visibility: visible;
     }
+
+    #nav-menu a {
+        font-size: 16px;
+        padding: 16px 24px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        justify-content: flex-start;
+    }
+
+    #nav-menu a:hover::before { background-color: rgba(76,175,80,0.25); }
 
     .login {
         border-left: none;
         border-top: 2px solid rgba(255,255,255,0.3);
+        margin-top: 8px;
     }
 
-    main {
-        padding: 15px 12px;
-    }
+    main { padding: 15px 12px; }
+    main h1 { font-size: 1.4rem; }
 
-    main h1 {
-        font-size: 1.4rem;
-    }
-
-    /* Estilo decorativo para h2 en móvil: barra verde a la izquierda */
     main h2 {
-        color: #1b5e20;
         font-size: 1.8rem;
         display: flex;
         align-items: center;
@@ -642,108 +657,191 @@ achican. La galería pasa a 2 columnas. El footer se apila.
         display: inline-block;
         width: 6px;
         height: 32px;
-        background-color: #4caf50;
+        background-color: var(--border-accent);
         border-radius: 4px;
+        flex-shrink: 0;
+        transition: background-color 0.3s ease;
     }
 
-    .galeria-que-hacemos {
-        flex-wrap: wrap;
-        gap: 10px;
-    }
+    .galeria-que-hacemos { flex-wrap: wrap; gap: 10px; }
+    .galeria-que-hacemos img { flex: 1 1 calc(50% - 5px); max-width: calc(50% - 5px); }
+    .carrusel { width: 100%; }
 
-    .galeria-que-hacemos img {
-        flex: 1 1 calc(50% - 5px);
-        max-width: calc(50% - 5px);
-    }
-
-    .carrusel {
-        width: 100%;
-    }
-
-    .footer-columnas {
-        flex-direction: column;
-        align-items: center;
-        padding: 24px 20px 16px 20px;
-        gap: 24px;
-    }
-
-    .footer-col {
-        align-items: center;
-        text-align: center;
-        max-width: 100%;
-    }
-
-    .mapa-footer {
-        max-width: 90%;
-    }
-
-    .footer-bottom {
-        flex-direction: column;
-        gap: 10px;
-    }
+    .footer-columnas { flex-direction: column; align-items: center; padding: 24px 20px 16px 20px; gap: 24px; }
+    .footer-col { align-items: center; text-align: center; max-width: 100%; }
+    .mapa-footer { max-width: 90%; }
+    .footer-bottom { flex-direction: column; gap: 10px; }
 }
 
-
 /* ============================================================
-RESPONSIVE — MÓVIL PEQUEÑO (≤380px)
-Ajustes mínimos para pantallas muy angostas: nav y h1
-con tamaño de fuente reducido.
+   RESPONSIVE — MÓVIL PEQUEÑO (≤380px)
    ============================================================ */
 @media (max-width: 380px) {
-    nav a {
-        font-size: 13px;
-        padding: 11px 10px;
-    }
-
-    main h1 {
-        font-size: 1.2rem;
-    }
+    main h1 { font-size: 1.2rem; }
 }
 
 
 /* ============================================================
-MENÚ LATERAL — PANEL DESLIZANTE (TODOS LOS TAMAÑOS)
-El nav siempre es un panel lateral fijo oculto a la derecha.
-Se abre en cualquier pantalla al presionar el botón hamburguesa.
-JavaScript agrega/quita .nav-abierto para mostrarlo u ocultarlo.
+   CORRECCIÓN FINAL — SWITCH FLOTANTE SIN EMOJIS
    ============================================================ */
-#nav-menu {
-    position: fixed;
-    top: 0;
-    right: -100%; /* Empieza fuera de pantalla */
-    width: 75%;
-    max-width: 300px;
-    height: 100%;
-    background-color: #1b5e20;
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: flex-start;
-    padding-top: 80px;
-    gap: 0;
-    z-index: 1000;
-    box-shadow: -4px 0 20px rgba(0,0,0,0.3);
-    transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow-y: auto;
+#btn-tema {
+    position: fixed !important;
+    right: 20px !important;
+    top: 50% !important;
+    bottom: auto !important;
+    transform: translateY(-50%) !important;
+    z-index: 10000 !important;
+
+    width: 62px !important;
+    height: 32px !important;
+    background: transparent !important;
+    border: none !important;
+    padding: 0 !important;
+    cursor: pointer !important;
+
+    display: block !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
 }
 
-#nav-menu.nav-abierto {
-    right: 0; /* Se desliza hacia adentro al abrirse */
+#btn-tema .icono-tema,
+#btn-tema .texto-tema {
+    display: none !important;
 }
 
-#nav-menu a {
-    font-size: 16px;
-    padding: 16px 24px;
-    border-bottom: 1px solid rgba(255,255,255,0.1);
-    justify-content: flex-start;
+#btn-tema .switch-track {
+    width: 62px;
+    height: 32px;
+    background: #cfd8dc;
+    border-radius: 999px;
+    display: block;
+    position: relative;
+    transition: background-color 0.3s ease;
 }
 
-#nav-menu a:hover::before {
-    background-color: rgba(76,175,80,0.25);
+#btn-tema .switch-thumb {
+    width: 26px;
+    height: 26px;
+    background: #ffffff;
+    border-radius: 50%;
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    transition: transform 0.3s ease;
+    box-shadow: 0 2px 6px rgba(0,0,0,.25);
 }
 
-.login {
-    border-left: none;
-    border-top: 2px solid rgba(255,255,255,0.3);
-    margin-top: 8px;
+#btn-tema.activo .switch-track {
+    background: #4caf50;
+}
+
+#btn-tema.activo .switch-thumb {
+    transform: translateX(30px);
+}
+
+@media (max-width: 768px) {
+    #btn-tema {
+        right: 12px !important;
+        top: auto !important;
+        bottom: 20px !important;
+        transform: none !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
+/* ===========================
+   LOGIN MODAL
+=========================== */
+
+#modal-login{
+    display:none;
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    justify-content:center;
+    align-items:center;
+    z-index:99999;
+}
+
+.modal-contenido{
+    background:white;
+    width:90%;
+    max-width:420px;
+    padding:25px;
+    border-radius:12px;
+    position:relative;
+}
+
+.cerrar-modal{
+    position:absolute;
+    top:10px;
+    right:15px;
+    font-size:28px;
+    cursor:pointer;
+}
+
+.grupo-campo{
+    display:flex;
+    flex-direction:column;
+    margin-bottom:15px;
+}
+
+.grupo-campo input{
+    padding:10px;
+    border:1px solid #4caf50;
+    border-radius:6px;
+}
+
+#mensaje-login{
+    margin-bottom:15px;
+    font-weight:bold;
+}
+
+.btn-login{
+    width:100%;
+    padding:12px;
+    background:#2e7d32;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.btn-login:hover{
+    background:#1b5e20;
+}
+
+/* ===========================
+   CORRECCIÓN MODAL LOGIN
+   MODO CLARO / OSCURO
+=========================== */
+
+.modal-contenido {
+    background: var(--bg-section);
+    color: var(--text-primary);
+}
+
+.modal-contenido h2,
+.modal-contenido label {
+    color: var(--text-primary);
+}
+
+.grupo-campo input {
+    background: var(--bg-page);
+    color: var(--text-primary);
+    border: 1px solid var(--border-accent);
+}
+
+.grupo-campo input::placeholder {
+    color: var(--text-muted);
+}
+
+.cerrar-modal {
+    color: var(--text-primary);
+}
+
+#mensaje-login {
+    color: var(--text-primary);
 }

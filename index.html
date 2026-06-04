@@ -70,6 +70,35 @@
         
     </main>
 
+
+    <!-- Modal de inicio de sesión -->
+    <div class="modal-login" id="modal-login">
+        <div class="modal-contenido">
+            <button type="button" class="cerrar-modal" id="cerrar-modal" aria-label="Cerrar ventana">&times;</button>
+
+            <h2>Inicio de sesión</h2>
+            <p class="modal-texto">Ingresa tus datos para acceder al sistema.</p>
+
+            <form id="form-login" novalidate>
+                <div class="grupo-formulario">
+                    <label for="correo-login">Correo electrónico</label>
+                    <input type="email" id="correo-login" name="correo" placeholder="ejemplo@correo.com">
+                    <span class="mensaje-error" id="error-correo"></span>
+                </div>
+
+                <div class="grupo-formulario">
+                    <label for="password-login">Contraseña</label>
+                    <input type="password" id="password-login" name="password" placeholder="Ingresa tu contraseña">
+                    <span class="mensaje-error" id="error-password"></span>
+                </div>
+
+                <button type="submit" class="btn-login-modal">Ingresar</button>
+                <p class="mensaje-exito" id="mensaje-exito"></p>
+            </form>
+        </div>
+    </div>
+
+
     <footer>
         <div class="footer-columnas">
 
