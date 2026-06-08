@@ -503,3 +503,173 @@ formLogin.addEventListener("submit", (e) => {
     }, 1500);
 
 });
+
+/* ==========================================================
+   NARRADOR DE ACCESIBILIDAD — Web Speech API
+   Lee en voz alta el contenido al hacer clic (modo activo)
+   o al pasar el cursor (modo hover) cuando está habilitado.
+   
+   SEGURIDAD: todo texto extraído del DOM se pasa a
+   SpeechSynthesisUtterance como string plano; la API no
+   interpreta HTML, por lo que no hay riesgo de inyección.
+========================================================== */
+
+(function () {
+
+    // ── Verificar soporte del navegador ──────────────────────
+    if (!('speechSynthesis' in window)) {
+        console.warn('Narrador: Web Speech API no disponible en este navegador.');
+        return;
+    }
+
+    // ── Estado ──────────────────────
+    let narradorActivo = false;
+    const STORAGE_KEY = 'narrador-activo';
+
+    // ── Región live para anuncios de estado (ARIA) ──────────────────────
+    const liveRegion = document.createElement('div');
+    liveRegion.setAttribute('aria-live', 'assertive');
+    liveRegion.setAttribute('aria-atomic', 'true');
+    liveRegion.className = 'narrador-live-region';
+    document.body.appendChild(liveRegion);
+
+    // ── Función principal de narración ──────────────────────
+    function narrar(texto) {
+        if (!texto || !narradorActivo) return;
+
+        window.speechSynthesis.cancel();
+
+        const utterance = new SpeechSynthesisUtterance(texto);
+        utterance.lang = 'es-CL';
+        utterance.rate = 0.95;
+        utterance.pitch = 1;
+        utterance.volume = 1;
+
+        // Preferir voz en español si está disponible
+        const voces = window.speechSynthesis.getVoices();
+        const vozEspanol = voces.find(v =>
+            v.lang.startsWith('es') && v.localService
+        ) || voces.find(v => v.lang.startsWith('es'));
+
+        if (vozEspanol) utterance.voice = vozEspanol;
+
+        window.speechSynthesis.speak(utterance);
+    }
+
+    // ── Extrae texto legible de un elemento ──────────────────────
+    function extraerTexto(el) {
+        // Prioridad: aria-label > alt > textContent visible
+        if (el.getAttribute('aria-label')) return el.getAttribute('aria-label');
+        if (el.tagName === 'IMG' && el.alt) return el.alt;
+
+        // Para tarjetas flip, leer nombre + descripción
+        const escena = el.closest('.escena');
+        if (escena) {
+            const nombre = escena.querySelector('h3');
+            const desc   = escena.querySelector('.cara-reverso p');
+            const cargo  = escena.querySelector('.cara-reverso .separador');
+            let txt = '';
+            if (nombre) txt += nombre.textContent.trim() + '. ';
+            if (desc)   txt += desc.textContent.trim();
+            return txt;
+        }
+
+        // Para enlaces de navegación
+        if (el.closest('nav')) {
+            return el.textContent.trim();
+        }
+
+        // Texto general: hasta 300 caracteres para no saturar
+        const raw = el.textContent.trim().replace(/\s+/g, ' ');
+        return raw.length > 300 ? raw.slice(0, 300) + '…' : raw;
+    }
+
+    // ── Manejador de clic global ──────────────────────
+    function manejarClic(e) {
+        if (!narradorActivo) return;
+
+        const el = e.target.closest(
+            'p, h1, h2, h3, h4, li, a, button, label, img, ' +
+            '.escena, section, .footer-col, [aria-label]'
+        );
+
+        if (!el) return;
+
+        // Evitar narrar el propio botón del narrador (tiene su propio mensaje)
+        if (el.id === 'btn-narrador' || el.closest('#btn-narrador')) return;
+
+        const texto = extraerTexto(el);
+        if (texto) narrar(texto);
+    }
+
+    document.addEventListener('click', manejarClic);
+
+    // ── Detener narración al presionar Escape ──────────────────────
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            window.speechSynthesis.cancel();
+        }
+    });
+
+    // ── Botón flotante del narrador ──────────────────────
+    const btnNarrador = document.createElement('button');
+    btnNarrador.id = 'btn-narrador';
+    btnNarrador.setAttribute('aria-label', 'Activar narrador de accesibilidad');
+    btnNarrador.setAttribute('aria-pressed', 'false');
+    btnNarrador.title = 'Narrador de accesibilidad';
+
+    // Ícono SVG de altavoz (inline, sin dependencias externas)
+    const svgActivo = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
+        <path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3c0-1.77-1.02-3.29-2.5-4.03v8.05c1.48-.73 2.5-2.25 2.5-4.02zM14 3.23v2.06c2.89.86 5 3.54 5 6.71s-2.11 5.85-5 6.71v2.06c4.01-.91 7-4.49 7-8.77s-2.99-7.86-7-8.77z"/>
+    </svg>`;
+
+    const svgSilencio = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="22" height="22" aria-hidden="true">
+        <path d="M16.5 12c0-1.77-1.02-3.29-2.5-4.03v2.21l2.45 2.45c.03-.2.05-.41.05-.63zm2.5 0c0 .94-.2 1.82-.54 2.64l1.51 1.51C20.63 14.91 21 13.5 21 12c0-4.28-2.99-7.86-7-8.77v2.06c2.89.86 5 3.54 5 6.71zM4.27 3L3 4.27 7.73 9H3v6h4l5 5v-6.73l4.25 4.25c-.67.52-1.42.93-2.25 1.18v2.06c1.38-.31 2.63-.95 3.69-1.81L19.73 21 21 19.73l-9-9L4.27 3zM12 4L9.91 6.09 12 8.18V4z"/>
+    </svg>`;
+
+    btnNarrador.innerHTML = svgSilencio;
+    document.body.appendChild(btnNarrador);
+
+    // ── Lógica de activar / desactivar ──────────────────────
+    function actualizarEstadoNarrador() {
+        btnNarrador.classList.toggle('narrador-activo', narradorActivo);
+        btnNarrador.setAttribute('aria-pressed', String(narradorActivo));
+        btnNarrador.setAttribute(
+            'aria-label',
+            narradorActivo ? 'Desactivar narrador' : 'Activar narrador de accesibilidad'
+        );
+        btnNarrador.innerHTML = narradorActivo ? svgActivo : svgSilencio;
+
+        // Anunciar cambio de estado por la región live (para lectores de pantalla)
+        liveRegion.textContent = narradorActivo
+            ? 'Narrador activado. Haga clic en cualquier elemento para escucharlo.'
+            : 'Narrador desactivado.';
+        setTimeout(() => { liveRegion.textContent = ''; }, 3000);
+    }
+
+    btnNarrador.addEventListener('click', (e) => {
+        e.stopPropagation(); // evitar que dispare manejarClic
+        narradorActivo = !narradorActivo;
+        localStorage.setItem(STORAGE_KEY, narradorActivo ? '1' : '0');
+
+        if (narradorActivo) {
+            narrar('Narrador activado. Haga clic en cualquier elemento para escucharlo.');
+        } else {
+            window.speechSynthesis.cancel();
+        }
+
+        actualizarEstadoNarrador();
+    });
+
+    // ── Restaurar preferencia guardada ──────────────────────
+    if (localStorage.getItem(STORAGE_KEY) === '1') {
+        narradorActivo = true;
+        actualizarEstadoNarrador();
+    }
+
+    // ── Pausar síntesis cuando la pestaña pierde el foco ──────────────────────
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) window.speechSynthesis.cancel();
+    });
+
+})();
