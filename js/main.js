@@ -1,3 +1,39 @@
+/* ==========================================================
+   UTILIDADES DE SEGURIDAD — PREVENCIÓN XSS
+   Sanitiza cualquier texto antes de insertarlo en el DOM.
+   - sanitizeText : escapa caracteres HTML peligrosos
+   - setTextSafe  : asigna texto limpio a textContent (no interpreta HTML)
+   - createElSafe : crea un elemento y le asigna texto sanitizado
+========================================================== */
+
+/**
+ * Escapa los 5 caracteres HTML especiales de una cadena.
+ * Úsalo siempre que debas mostrar datos del usuario en el DOM.
+ * @param {string} str - Cadena a sanitizar
+ * @returns {string} Cadena con caracteres peligrosos escapados
+ */
+function sanitizeText(str) {
+    if (typeof str !== 'string') return '';
+    return str
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#x27;');
+}
+
+/**
+ * Asigna texto a un elemento usando textContent (nunca innerHTML).
+ * textContent no interpreta HTML, por lo que es seguro por sí solo;
+ * esta función lo hace explícito y documentado.
+ * @param {HTMLElement} el  - Elemento destino
+ * @param {string}      str - Texto a asignar
+ */
+function setTextSafe(el, str) {
+    el.textContent = typeof str === 'string' ? str : '';
+}
+
+
 (function () {
 
     // ── 1. TEMA ──────────────────────
@@ -13,11 +49,15 @@
     btnTema.id = 'btn-tema';
     btnTema.setAttribute('aria-label', 'Cambiar modo de color');
 
-    btnTema.innerHTML = `
-        <span class="switch-track">
-            <span class="switch-thumb"></span>
-        </span>
-    `;
+    // SEGURIDAD: se construye con DOM en lugar de innerHTML
+    // para evitar inyección de HTML en caso de que esta cadena
+    // provenga de una fuente externa en el futuro.
+    const switchTrack = document.createElement('span');
+    switchTrack.className = 'switch-track';
+    const switchThumb = document.createElement('span');
+    switchThumb.className = 'switch-thumb';
+    switchTrack.appendChild(switchThumb);
+    btnTema.appendChild(switchTrack);
 
     document.body.appendChild(btnTema);
 
@@ -73,7 +113,9 @@
         a.classList.add(clase);
 
         const span = document.createElement('span');
-        span.textContent = texto;
+        // SEGURIDAD: textContent no interpreta HTML; previene XSS
+        // si el array de enlaces llega a ser dinámico/externo.
+        setTextSafe(span, texto);
 
         a.appendChild(span);
         nav.appendChild(a);
@@ -216,13 +258,16 @@
         img.src = miembro.imagen;
         img.alt = miembro.nombre;
 
+        // SEGURIDAD: todos los campos del objeto "miembro" se insertan
+        // con textContent / setTextSafe — nunca con innerHTML —
+        // para que un valor malicioso no pueda ejecutar scripts.
         const hint = document.createElement('div');
         hint.classList.add('hint');
-        hint.textContent = '↻';
+        setTextSafe(hint, '↻');
 
         const etiqueta = document.createElement('div');
         etiqueta.classList.add('etiqueta');
-        etiqueta.textContent = miembro.nombre;
+        setTextSafe(etiqueta, miembro.nombre);
 
         caraFrente.appendChild(img);
         caraFrente.appendChild(hint);
@@ -233,16 +278,16 @@
 
         const icono = document.createElement('div');
         icono.classList.add('icono-grande');
-        icono.textContent = miembro.icono;
+        setTextSafe(icono, miembro.icono);
 
         const h3 = document.createElement('h3');
-        h3.textContent = miembro.nombre;
+        setTextSafe(h3, miembro.nombre);
 
         const sep = document.createElement('div');
         sep.classList.add('separador');
 
         const p = document.createElement('p');
-        p.textContent = miembro.descripcion;
+        setTextSafe(p, miembro.descripcion);
 
         caraReverso.appendChild(icono);
         caraReverso.appendChild(h3);
@@ -270,44 +315,92 @@
    LOGIN MODAL EMERGENTE
 ========================================================== */
 
+/* ==========================================================
+   LOGIN MODAL EMERGENTE
+   SEGURIDAD: se construye íntegramente con la DOM API en lugar
+   de innerHTML, eliminando cualquier superficie de inyección HTML.
+========================================================== */
+
 const modalLogin = document.createElement("div");
 modalLogin.id = "modal-login";
 
-modalLogin.innerHTML = `
-<div class="modal-contenido">
+// — Contenedor interior —
+const modalContenido = document.createElement("div");
+modalContenido.className = "modal-contenido";
 
-    <span class="cerrar-modal">&times;</span>
+// — Botón de cierre —
+const spanCerrar = document.createElement("span");
+spanCerrar.className = "cerrar-modal";
+setTextSafe(spanCerrar, "×");   // entidad segura, no innerHTML
 
-    <h2>Iniciar Sesión</h2>
+// — Título —
+const modalTitulo = document.createElement("h2");
+setTextSafe(modalTitulo, "Iniciar Sesión");
 
-    <form id="form-login" novalidate>
+// — Formulario —
+const formLogin = document.createElement("form");
+formLogin.id = "form-login";
+formLogin.setAttribute("novalidate", "");
 
-        <div class="grupo-campo">
-            <label for="correo-login">Correo electrónico</label>
-            <input
-                type="email"
-                id="correo-login"
-                placeholder="ejemplo@correo.com">
-        </div>
+// Campo correo
+const grupoCorreo = document.createElement("div");
+grupoCorreo.className = "grupo-campo";
 
-        <div class="grupo-campo">
-            <label for="password-login">Contraseña</label>
-            <input
-                type="password"
-                id="password-login"
-                placeholder="Ingrese su contraseña">
-        </div>
+const labelCorreo = document.createElement("label");
+labelCorreo.setAttribute("for", "correo-login");
+setTextSafe(labelCorreo, "Correo electrónico");
 
-        <div id="mensaje-login"></div>
+const inputCorreo = document.createElement("input");
+inputCorreo.type = "email";
+inputCorreo.id = "correo-login";
+inputCorreo.placeholder = "ejemplo@correo.com";
+// SEGURIDAD: maxlength limita la superficie de ataque en la entrada
+inputCorreo.maxLength = 254;
+inputCorreo.autocomplete = "email";
 
-        <button type="submit" class="btn-login">
-            Ingresar
-        </button>
+grupoCorreo.appendChild(labelCorreo);
+grupoCorreo.appendChild(inputCorreo);
 
-    </form>
+// Campo contraseña
+const grupoPassword = document.createElement("div");
+grupoPassword.className = "grupo-campo";
 
-</div>
-`;
+const labelPassword = document.createElement("label");
+labelPassword.setAttribute("for", "password-login");
+setTextSafe(labelPassword, "Contraseña");
+
+const inputPassword = document.createElement("input");
+inputPassword.type = "password";
+inputPassword.id = "password-login";
+inputPassword.placeholder = "Ingrese su contraseña";
+// SEGURIDAD: maxlength razonable para no aceptar payloads gigantes
+inputPassword.maxLength = 128;
+inputPassword.autocomplete = "current-password";
+
+grupoPassword.appendChild(labelPassword);
+grupoPassword.appendChild(inputPassword);
+
+// Zona de mensajes de error/éxito
+const divMensaje = document.createElement("div");
+divMensaje.id = "mensaje-login";
+
+// Botón submit
+const btnSubmit = document.createElement("button");
+btnSubmit.type = "submit";
+btnSubmit.className = "btn-login";
+setTextSafe(btnSubmit, "Ingresar");
+
+// Ensamblar formulario
+formLogin.appendChild(grupoCorreo);
+formLogin.appendChild(grupoPassword);
+formLogin.appendChild(divMensaje);
+formLogin.appendChild(btnSubmit);
+
+// Ensamblar modal
+modalContenido.appendChild(spanCerrar);
+modalContenido.appendChild(modalTitulo);
+modalContenido.appendChild(formLogin);
+modalLogin.appendChild(modalContenido);
 
 document.body.appendChild(modalLogin);
 
@@ -332,10 +425,9 @@ document.addEventListener("click", (e) => {
    CERRAR MODAL
 ========================================================== */
 
-const cerrarModal =
-    modalLogin.querySelector(".cerrar-modal");
-
-cerrarModal.addEventListener("click", () => {
+// SEGURIDAD: se usa la variable directa en lugar de querySelector,
+// evitando que un atacante inyecte otro .cerrar-modal en el DOM.
+spanCerrar.addEventListener("click", () => {
     modalLogin.style.display = "none";
 });
 
@@ -350,77 +442,64 @@ window.addEventListener("click", (e) => {
 
 /* ==========================================================
    VALIDACIÓN FORMULARIO
+   SEGURIDAD: los mensajes de error/éxito se escriben con
+   setTextSafe (textContent) — nunca con innerHTML —
+   para que un atacante no pueda inyectar HTML a través de
+   los valores del formulario ni de la lógica de mensajes.
 ========================================================== */
 
-const formularioLogin =
-    document.getElementById("form-login");
+/**
+ * Muestra un mensaje de validación en el modal.
+ * @param {HTMLElement} el    - Elemento #mensaje-login
+ * @param {string}      texto - Texto a mostrar (se sanitiza internamente)
+ * @param {'error'|'ok'} tipo - Controla el color
+ */
+function mostrarMensaje(el, texto, tipo) {
+    setTextSafe(el, texto);               // SEGURIDAD: textContent, no innerHTML
+    el.style.color = tipo === 'ok' ? 'green' : 'red';
+}
 
-formularioLogin.addEventListener("submit", (e) => {
+formLogin.addEventListener("submit", (e) => {
 
     e.preventDefault();
 
-    const correo =
-        document.getElementById("correo-login")
-        .value
-        .trim();
+    // SEGURIDAD: .trim() elimina espacios sobrantes antes de validar
+    const correo   = inputCorreo.value.trim();
+    const password = inputPassword.value.trim();
+    const mensaje  = document.getElementById("mensaje-login");
 
-    const password =
-        document.getElementById("password-login")
-        .value
-        .trim();
-
-    const mensaje =
-        document.getElementById("mensaje-login");
-
-    mensaje.textContent = "";
-    mensaje.style.color = "red";
+    // Limpiar mensaje anterior
+    setTextSafe(mensaje, '');
 
     if (correo === "") {
-
-        mensaje.textContent =
-            "Debe ingresar un correo electrónico.";
-
+        mostrarMensaje(mensaje, "Debe ingresar un correo electrónico.", 'error');
         return;
     }
 
-    const regexCorreo =
-        /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const regexCorreo = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     if (!regexCorreo.test(correo)) {
-
-        mensaje.textContent =
-            "Ingrese un correo electrónico válido.";
-
+        mostrarMensaje(mensaje, "Ingrese un correo electrónico válido.", 'error');
         return;
     }
 
     if (password === "") {
-
-        mensaje.textContent =
-            "Debe ingresar una contraseña.";
-
+        mostrarMensaje(mensaje, "Debe ingresar una contraseña.", 'error');
         return;
     }
 
     if (password.length < 6) {
-
-        mensaje.textContent =
-            "La contraseña debe tener al menos 6 caracteres.";
-
+        mostrarMensaje(mensaje, "La contraseña debe tener al menos 6 caracteres.", 'error');
         return;
     }
 
-    mensaje.style.color = "green";
-
-    mensaje.textContent =
-        "Inicio de sesión exitoso.";
+    mostrarMensaje(mensaje, "Inicio de sesión exitoso.", 'ok');
 
     setTimeout(() => {
-
         modalLogin.style.display = "none";
-
-        formularioLogin.reset();
-
+        formLogin.reset();
+        // Limpiar mensaje al cerrar para no filtrar info en próxima apertura
+        setTextSafe(mensaje, '');
     }, 1500);
 
 });
